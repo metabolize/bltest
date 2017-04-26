@@ -38,9 +38,6 @@ def speed(label):
         def test_some_veryslow_function(self):
             ... # method decorator overrides class decorator
     '''
-    allowed = ['fast', 'slow', 'veryslow', 'superslow', 'red_accuracy']
-    if label not in allowed:
-        raise ValueError('Invalid speed {}, not in {}'.format(label, allowed))
     def wrap_obj(obj):
         import inspect
         if inspect.ismethod(obj) or inspect.isfunction(obj):
@@ -55,7 +52,6 @@ speed.fast = speed('fast')
 speed.slow = speed('slow')
 speed.veryslow = speed('veryslow')
 speed.superslow = speed('superslow')
-speed.red_accuracy = speed('red_accuracy')
 
 def _method_speed(label):
     '''
@@ -118,27 +114,28 @@ def skip_if_ci():
     import os
     import unittest
     if 'CIRCLECI' in os.environ:
-        raise unittest.SkipTest("Skipping tests just don't work in CI")
+        raise unittest.SkipTest("Skipping tests that just don't work in CI")
 
 def skip_if_unavailable(what):
     import unittest
     from baiji.config import is_available as s3_is_available
     from baiji.util.reachability import internet_reachable
-    from guts.message_router import sqs
     if what == 'internet' or 'internet' in what:
         if not internet_reachable():
             raise unittest.SkipTest('Skipping tests that require access to the internet, since it cannot be reached')
     elif what == 's3' or 's3' in what:
         if not s3_is_available():
             raise unittest.SkipTest('Skipping tests that require s3, since it cannot be reached')
-    elif what == 'sqs' or 'sqs' in what:
-        if not sqs.is_available():
-            raise unittest.SkipTest('Skipping tests that require sqs, since it cannot be reached')
-    elif what == 'opendr' or 'opendr' in what:
-        try:
-            import opendr # we're not using it here, but the whole point of testing for it is that someone will pylint: disable=unused-variable
-        except ImportError:
-            raise unittest.SkipTest('Skipping tests that require opendr, since it cannot be imported')
+    else:
+        raise ValueError("skip_if_unavailable: don't know how to check {}".format(what))
+
+def skip_on_import_error(what):
+    import unittest
+    from importlib import import_module
+    try:
+        import_module(what)
+    except ImportError:
+        raise unittest.SkipTest('Skipping tests that require {}, since it cannot be imported'.format(what))
 
 class BackupEnvMixin(object):
     '''
