@@ -21,7 +21,7 @@ setup(
     author_email='aw@bodylabs.com',
     description='BodyLabs unittest extensions',
     long_description=long_description,
-    url='https://github.com/bodylabs/___',
+    url='https://github.com/bodylabs/bltest',
     license='MIT',
     packages=[
         'bltest'
