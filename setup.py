@@ -5,14 +5,12 @@ try:
     long_description = pypandoc.convert('README.md', 'rst')
 except (IOError, ImportError):
     long_description = ''
-    print 'warning: pandoc or pypandoc does not seem to be installed; using empty long_description'
+    print('warning: pandoc or pypandoc does not seem to be installed; using empty long_description')
 
 import importlib
-from pip.req import parse_requirements
 from setuptools import setup
 
-install_requires = parse_requirements('requirements.txt', session=False)
-install_requires = [str(ir.req) for ir in install_requires]
+install_requires = [x.strip() for x in open('requirements.txt').readlines() if x.strip() and not x.strip().startswith('#')]
 
 setup(
     name='bltest',
