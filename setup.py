@@ -13,7 +13,7 @@ from setuptools import setup
 install_requires = [x.strip() for x in open('requirements.txt').readlines() if x.strip() and not x.strip().startswith('#')]
 
 setup(
-    name='bltest',
+    name='metabltest',
     version=importlib.import_module('bltest').__version__,
     author='Body Labs',
     author_email='aw@bodylabs.com',
